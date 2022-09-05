@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "138223447156",
+    "project_id": "ssossotable-food",
+    "storage_bucket": "ssossotable-food.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:138223447156:android:f599c882dfd27952147521",
+        "android_client_info": {
+          "package_name": "com.ssossotable.food"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "138223447156-p293chtpedi2gm5jglb60nj7d7hh5jii.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ssossotable.food",
+            "certificate_hash": "08b7e38107fedbf8e4eb192175ae5c878ee06e01"
+          }
+        },
+        {
+          "client_id": "138223447156-5lcaovclgrvoavsatm61nalt232778hb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDtb47TWeKHqC8Ny-ORgiaYogCZEdheMs0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "138223447156-5lcaovclgrvoavsatm61nalt232778hb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
