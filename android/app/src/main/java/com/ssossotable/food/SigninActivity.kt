@@ -1,11 +1,11 @@
-package com.example.food_database
+package com.ssossotable.food
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
-import com.example.food_database.databinding.ActivitySigninBinding
+import com.ssossotable.food.databinding.ActivitySigninBinding
 import io.socket.emitter.Emitter
 import org.json.JSONObject
 
@@ -18,9 +18,7 @@ class SigninActivity : AppCompatActivity() {
     private val INIT_SIGNIN:Int=231
     private val SIGNIN:Int=232
 
-    // 전역 변수로 바인딩 객체 선언
     private var mBinding: ActivitySigninBinding? = null
-    // 매번 null 체크를 할 필요 없이 편의성을 위해 바인딩 변수 재 선언
     private val binding get() = mBinding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {

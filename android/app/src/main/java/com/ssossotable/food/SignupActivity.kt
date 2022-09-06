@@ -1,4 +1,4 @@
-package com.example.food_database
+package com.ssossotable.food
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

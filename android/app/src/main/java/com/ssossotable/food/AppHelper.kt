@@ -1,4 +1,4 @@
-package com.example.food_database
+package com.ssossotable.food
 
 import io.socket.client.IO
 import io.socket.client.Socket
