@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Food-Database</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="search">search</string>
+    <string name="content_description_search">search</string>
+    <string name="info">info</string>
+    <string name="content_description_info">info</string>
+    <string name="rate">info</string>
+    <string name="content_description_rate">info</string>
 </resources>
