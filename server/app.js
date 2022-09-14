@@ -9,7 +9,8 @@ const { Server } = require("socket.io");
 const io = new Server(server);
 
 /**sql 연동 모듈**/
-const mysql=require('mysql2/promise') // mysql2/promise를 사용해야 비동기 작업이 가능하다
+const mysql=require('mysql2/promise')
+const crypto = require("crypto"); // mysql2/promise를 사용해야 비동기 작업이 가능하다
 let connection=null
 
 /**서버 포트(3000번)**/
@@ -55,6 +56,37 @@ io.on('connection', async (socket) => { // async키워드는 해당 콜백을 �
     socket.on('deviceID', async (msg)=>{
 
 
+    })
+
+    socket.on('signin',async msg=>{
+        const hash=crypto.createHash('sha512').update(msg).digest('base64')
+        const query='select * from user where userid=?'
+        const v=await connection.query(query,[hash])
+        let returnValue={}
+        if(v[0].length==0) {
+            returnValue.success=false
+        }
+        else {
+            returnValue.success=true
+        }
+        socket.emit('signin',returnValue)
+    })
+
+    socket.on('signup', async (msg) => {
+        console.log('message: ' + msg)
+
+        const hash=crypto.createHash('sha512').update(msg).digest('base64')
+        const query='select * from user where userid=?'
+        const v=await connection.query(query,[hash])
+        let returnValue={}
+        if(v[0].length==0) {
+            const query2='insert into user(userid) values(?)'
+            await connection.query(query2,[hash])
+            returnValue.success=true
+        } else {
+            returnValue.success=false
+        }
+        socket.emit('signup',returnValue)
     })
 
 
