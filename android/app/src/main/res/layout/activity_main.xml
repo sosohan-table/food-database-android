@@ -11,7 +11,13 @@
         android:layout_height="match_parent"
         android:paddingBottom="100dp"
         android:clipToPadding="false">
-        <!-- Scrollable content -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/foodRating"
+            >
+
+        </androidx.recyclerview.widget.RecyclerView>
     </androidx.core.widget.NestedScrollView>
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottomAppBar"

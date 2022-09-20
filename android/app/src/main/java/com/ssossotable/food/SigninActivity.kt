@@ -30,10 +30,8 @@ class SigninActivity : AppCompatActivity() {
 
     private lateinit var oneTapClient: SignInClient
     private lateinit var signInRequest: BeginSignInRequest
-    //private lateinit var signUpRequest: BeginSignInRequest
 
     private val REQ_ONE_TAP_SIGNIN = 2
-    //private val REQ_ONE_TAP_SIGNUP = 3  // Can be any integer unique to the Activity
     private var showOneTapUI = true
 
     private val TAG="MAIN TAG"
@@ -62,18 +60,8 @@ class SigninActivity : AppCompatActivity() {
             startActivity(Intent(this,SignupActivity::class.java))
         }
 
-
-        // 구글로그인
-        AppHelper.socket.on("signin", signinEvent)
-        //mSocket.on("signup", signupEvent)
-        AppHelper.socket.connect()
-
-
         oneTapClient = Identity.getSignInClient(this)
         signInRequest = BeginSignInRequest.builder()
-            .setPasswordRequestOptions(BeginSignInRequest.PasswordRequestOptions.builder()
-                .setSupported(true)
-                .build())
             .setGoogleIdTokenRequestOptions(
                 BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
                     .setSupported(true)
@@ -97,45 +85,15 @@ class SigninActivity : AppCompatActivity() {
                         Log.e(TAG, "Couldn't start One Tap UI: ${e.localizedMessage}")
                     }
                 }
+                /**어플리케이션에 등록된 구글 계정이 없는 경우**/
                 .addOnFailureListener(this) { e ->
                     // No saved credentials found. Launch the One Tap sign-up flow, or
                     // do nothing and continue presenting the signed-out UI.
+                    Toast.makeText(applicationContext,"등록된 회원 정보가 없습니다 회원가입 해 주세요",Toast.LENGTH_SHORT).show()
                     Log.d(TAG, e.localizedMessage)
                 }
         }
     }
-
-    /**이벤트 처리**/
-    private val checkInit =
-        Emitter.Listener { args ->
-            runOnUiThread(Runnable {
-                val data: JSONObject = args[0] as JSONObject
-                when(data.getInt("state")) {
-                    // 초기로그인인 경우 사용자 정보 초기화(UserInit) 액티비티로 이동
-                    INIT_SIGNIN->{
-                        setCookieJSON.put("deviceID",deviceID)
-                        AppHelper.socket.emit("check cookie",setCookieJSON)
-                        startActivity(Intent(this,UserInitImageActivity::class.java))
-                    }
-                    // 초기 로그인이 아닌 경우 Main 액티비티로 이동
-                    SIGNIN -> {
-                        setCookieJSON.put("deviceID",deviceID)
-                        AppHelper.socket.emit("check cookie",setCookieJSON)
-                        startActivity(Intent(this,MainActivity::class.java))
-                    }
-                    // 에러 상황
-                    else->{
-                        finish();
-                        startActivity(intent);
-                    }
-                }
-            })
-        }
-    override fun onDestroy() {
-        super.onDestroy()
-        AppHelper.socket.disconnect()
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -144,13 +102,11 @@ class SigninActivity : AppCompatActivity() {
                 try {
                     val credential = oneTapClient.getSignInCredentialFromIntent(data)
                     val idToken = credential.googleIdToken
-                    //val username = credential.id
-                    //val password = credential.password
                     when {
                         idToken != null -> {
                             // Got an ID token from Google. Use it to authenticate
                             // with your backend.
-                            AppHelper.socket.emit("signup", idToken)
+                            AppHelper.socket.emit("check init", idToken)
                             Log.d("idtoken", idToken)
                             Log.d(TAG, "Got ID token.")
                         }
@@ -177,72 +133,39 @@ class SigninActivity : AppCompatActivity() {
                     }
                 }
             }
-
-
-            /*REQ_ONE_TAP_SIGNUP -> {
-                try {
-                    val credential = oneTapClient.getSignInCredentialFromIntent(data)
-                    val idToken = credential.googleIdToken
-                    when {
-                        idToken != null -> {
-                            // Got an ID token from Google. Use it to authenticate
-                            // with your backend.
-                            AppHelper.socket.emit("signup", idToken)
-                            Log.d(TAG, idToken)
-                            Log.d(TAG, "Got ID token.")
-                        }
-                        else -> {
-                            // Shouldn't happen.
-                            Log.d(TAG, "No ID token!")
-                        }
-                    }
-                } catch (e: ApiException) {
-                    when (e.statusCode) {
-                        CommonStatusCodes.CANCELED -> {
-                            Log.d(TAG, "One-tap dialog was closed.")
-                            // Don't re-prompt the user.
-                            showOneTapUI = false
-                        }
-                        CommonStatusCodes.NETWORK_ERROR -> {
-                            Log.d(TAG, "One-tap encountered a network error.")
-                            // Try again or just ignore.
-                        }
-                        else -> {
-                            Log.d(
-                                TAG, "Couldn't get credential from result." +
-                                        " (${e.localizedMessage})"
-                            )
-                        }
-                    }
-                }
-            }*/
         }
     }
 
-    private val signinEvent =
+    /**이벤트 처리**/
+    private val checkInit =
         Emitter.Listener { args ->
             runOnUiThread(Runnable {
                 val data: JSONObject = args[0] as JSONObject
-                if(data.getBoolean("success")) {
-                    startActivity(Intent(applicationContext,MainActivity::class.java))
+                when(data.getInt("state")) {
+                    // 초기로그인인 경우 사용자 정보 초기화(UserInit) 액티비티로 이동
+                    INIT_SIGNIN->{
+                        // 자동 로그인 쿠키 등록
+                        setCookieJSON.put("deviceID",deviceID)
+                        AppHelper.socket.emit("check cookie",setCookieJSON)
+                        startActivity(Intent(this,UserInitImageActivity::class.java))
+                    }
+                    // 초기 로그인이 아닌 경우 Main 액티비티로 이동
+                    SIGNIN -> {
+                        // 자동 로그인 쿠키 등록
+                        setCookieJSON.put("deviceID",deviceID)
+                        AppHelper.socket.emit("check cookie",setCookieJSON)
+                        startActivity(Intent(this,MainActivity::class.java))
+                    }
+                    // 에러 상황
+                    else->{
+                        finish();
+                        startActivity(intent);
+                    }
                 }
-                else {
-                    Toast.makeText(applicationContext,"not registered user", Toast.LENGTH_SHORT).show()
-                }
-                Log.d("AAA","AAAAA")
             })
         }
-
-    /*private val signupEvent =
-        Emitter.Listener { args ->
-            runOnUiThread(Runnable {
-                val data: JSONObject = args[0] as JSONObject
-                if(data.getBoolean("success")) {
-                    startActivity(Intent(applicationContext,SigninActivity::class.java))
-                }
-                else {
-                    Toast.makeText(applicationContext,"registered info", Toast.LENGTH_SHORT).show()
-                }
-            })
-        }*/
+    override fun onDestroy() {
+        super.onDestroy()
+        AppHelper.socket.disconnect()
+    }
 }
