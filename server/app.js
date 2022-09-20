@@ -53,9 +53,31 @@ io.on('connection', async (socket) => { // async키워드는 해당 콜백을 �
         else console.log('login fail')
     })
 
-    socket.on('deviceID', async (msg)=>{
+    //device id 없을 떄
+    socket.on('init deviceId', async (msg)=>{
+        let returnInitValue={}
+        const a = 'select DATE_ADD(NOW(), INTERVAL 10 MINUTE)'
+        const b = connection.query(a)
 
+        const query='insert into user_cookie value(?, ?)'
+        const v=await connection.query(query,[msg.deviceID, b])
 
+        returnInitValue.state = 231
+        socket.emit('', returnInitValue)
+    })
+
+    //device id 있을 때
+    socket.on('deviceId', async (msg)=>{
+        let returnInitValue={}
+
+        const a = 'select DATE_ADD(NOW(), INTERVAL 10 MINUTE)'
+        const b = connection.query(a)
+
+        const query='update user_cookie set Expire = ? where deviceId = ?'
+        const v=await connection.query(query,[b, msg.deviceID])
+
+        returnInitValue.state = 232
+        socket.emit('', returnInitValue)
     })
 
     socket.on('signin',async msg=>{

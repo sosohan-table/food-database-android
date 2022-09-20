@@ -144,16 +144,14 @@ class SigninActivity : AppCompatActivity() {
                 when(data.getInt("state")) {
                     // 초기로그인인 경우 사용자 정보 초기화(UserInit) 액티비티로 이동
                     INIT_SIGNIN->{
-                        // 자동 로그인 쿠키 등록
                         setCookieJSON.put("deviceID",deviceID)
-                        AppHelper.socket.emit("check cookie",setCookieJSON)
+                        AppHelper.socket.emit("insert deviceId",setCookieJSON)
                         startActivity(Intent(this,UserInitImageActivity::class.java))
                     }
                     // 초기 로그인이 아닌 경우 Main 액티비티로 이동
                     SIGNIN -> {
-                        // 자동 로그인 쿠키 등록
                         setCookieJSON.put("deviceID",deviceID)
-                        AppHelper.socket.emit("check cookie",setCookieJSON)
+                        AppHelper.socket.emit("deviceId",setCookieJSON)
                         startActivity(Intent(this,MainActivity::class.java))
                     }
                     // 에러 상황
