@@ -121,11 +121,11 @@ server.listen(PORT, async () => {
     try {
         // await키워드를 통해 비동기 실행
         connection=await mysql.createPool({
-            host: '18.117.84.165',
-            port: '3306',
-            user: 'ssossotable',
-            password: 'Mysql7968!',
-            database: 'ssossotable_food'
+            host: '*',
+            port: '*',
+            user: '*',
+            password: '*',
+            database: '*'
         })
     }
     catch (e) {
