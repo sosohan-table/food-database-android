@@ -29,8 +29,8 @@
         app:layout_constraintTop_toBottomOf="@id/ratingContentTitle"
         >
         <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="120px"
-            android:layout_height="120px"
+            android:layout_width="80px"
+            android:layout_height="80px"
             android:id="@+id/rateOne"
             android:src="@drawable/rating_before"
             app:layout_constraintTop_toTopOf="parent"
@@ -38,8 +38,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             />
         <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="120px"
-            android:layout_height="120px"
+            android:layout_width="80px"
+            android:layout_height="80px"
             android:id="@+id/rateTwo"
             android:src="@drawable/rating_before"
             app:layout_constraintTop_toTopOf="parent"
@@ -47,8 +47,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             />
         <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="120px"
-            android:layout_height="120px"
+            android:layout_width="80px"
+            android:layout_height="80px"
             android:id="@+id/rateThree"
             android:src="@drawable/rating_before"
             app:layout_constraintTop_toTopOf="parent"
@@ -56,8 +56,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             />
         <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="120px"
-            android:layout_height="120px"
+            android:layout_width="80px"
+            android:layout_height="80px"
             android:id="@+id/rateFour"
             android:src="@drawable/rating_before"
             app:layout_constraintTop_toTopOf="parent"
@@ -65,13 +65,14 @@
             app:layout_constraintBottom_toBottomOf="parent"
             />
         <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="120px"
-            android:layout_height="120px"
+            android:layout_width="80px"
+            android:layout_height="80px"
             android:id="@+id/rateFive"
             android:src="@drawable/rating_before"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toRightOf="@id/rateFour"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
             />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

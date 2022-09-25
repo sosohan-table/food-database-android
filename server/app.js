@@ -111,7 +111,32 @@ io.on('connection', async (socket) => { // async키워드는 해당 콜백을 �
         socket.emit('signup',returnValue)
     })
 
+    /**
+     * 초기로그인과 자동로그인은 별개로 생각하세요
+     * 1. 초기로그인일 경우 / 초기로그인이 아닐 경우 모두 쿠키 확인(check cookie)이벤트 송신하세요
+     * 2. 하나의 이벤트(check cookie)로 처리하세요 (별개로 나눌 이유가 없어요)
+     * 3. device id는 하나의 기기 / 한 번의 어플리케이션 설치에서는 동일하지만 그 이외의 경우에는 달라진다고 해요 (영구적인 값이 아님)
+     * 3.1 즉 deviceid값을 db에 영구적으로 저장할 필요는 없어요
+     * 3.2 쿠키 만료 시 deviceid값을 삭제하고 쿠키의 존재 여부는 device값을 가진 row가 있냐 없냐에 따라 처리하세요
+     * **/
 
+    socket.on('check cookie', async (msg) => {
+        /**
+         * TODO
+         * db에서 select문을 통해 deviceId값을 검색하세요
+         * 값이 있다면 232 코드
+         * 값이 없다면 231 코드를 emit하세요
+         * **/
+        let returnInitValue={}
+        const a = 'select DATE_ADD(NOW(), INTERVAL 10 MINUTE)'
+        const b = await connection.query(a)
+    })
+
+    socket.on('rating list', async (msg) => {
+        const query=`select food.id, name, image, userid, rating from food,rating where food.id=rating.foodid and userid=?`
+        const v=await connection.query(query)
+        console.log(v[0])
+    })
 });
 
 server.listen(PORT, async () => {

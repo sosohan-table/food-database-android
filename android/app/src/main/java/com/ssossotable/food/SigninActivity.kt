@@ -36,6 +36,7 @@ class SigninActivity : AppCompatActivity() {
 
     private val TAG="MAIN TAG"
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding = ActivitySigninBinding.inflate(layoutInflater)
@@ -143,6 +144,20 @@ class SigninActivity : AppCompatActivity() {
                 val data: JSONObject = args[0] as JSONObject
                 when(data.getInt("state")) {
                     // 초기로그인인 경우 사용자 정보 초기화(UserInit) 액티비티로 이동
+                    /**
+                     * ** TODO **
+                     *
+                     * 이벤트를 두 개로 나누지 말고 하나에서 처리하세요
+                     * 자동로그인과 초기로그인은 별개의 구현이에요
+                     * workflow
+                     * 1. 초기로그인의 경우
+                     *     1.1 자동로그인 쿠키 확인(check cookie) -(미존재)-> 로그인 액티비티로 이동 -> 초기로그인 확인(INIT_SIGNIN) -> 자동로그인 쿠키 등록(check cookie) -> 초기로그인 코드 시행
+                     * 2. 초기로그인이 아닌 경우
+                     *     2.1 자동로그인 쿠키 존재 시
+                     *         * 자동로그인 쿠키 확인(check cookie) -(존재)-> 메인액티비티로 이동
+                     *     2.2 자동로그인 쿠키 미 존재 시
+                     *         * 자동로그인 쿠키 확인(check cookie) -(미존재)-> 로그인 액티비티로 이동 -> 로그인 -> 초기로그인 확인(SIGNIN) -> 자동로그인 쿠키 등록(check cookie) -> 메인액티비티로 이동
+                     * **/
                     INIT_SIGNIN->{
                         setCookieJSON.put("deviceID",deviceID)
                         AppHelper.socket.emit("insert deviceId",setCookieJSON)
@@ -164,6 +179,6 @@ class SigninActivity : AppCompatActivity() {
         }
     override fun onDestroy() {
         super.onDestroy()
-        AppHelper.socket.disconnect()
+
     }
 }
