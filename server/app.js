@@ -54,7 +54,7 @@ io.on('connection', async (socket) => { // async키워드는 해당 콜백을 �
     })
 
     //device id 없을 떄
-    socket.on('init deviceId', async (msg)=>{
+    /*socket.on('init deviceId', async (msg)=>{
         let returnInitValue={}
         const a = 'select DATE_ADD(NOW(), INTERVAL 10 MINUTE)'
         const b = connection.query(a)
@@ -78,7 +78,7 @@ io.on('connection', async (socket) => { // async키워드는 해당 콜백을 �
 
         returnInitValue.state = 232
         socket.emit('', returnInitValue)
-    })
+    })*/
 
     socket.on('signin',async msg=>{
         const hash=crypto.createHash('sha512').update(msg).digest('base64')
@@ -130,7 +130,52 @@ io.on('connection', async (socket) => { // async키워드는 해당 콜백을 �
         let returnInitValue={}
         const a = 'select DATE_ADD(NOW(), INTERVAL 10 MINUTE)'
         const b = await connection.query(a)
+
+        const query = 'select * from user_cookie where deviceId = ?;'
+        const v = await connection.query(query,[msg.deviceID])
+
+        if (v[0] != null) {
+            const c='update user_cookie set Expire = ? where deviceId = ?'
+            const d=await connection.query(c,[b, msg.deviceID])
+            returnInitValue.state = 232
+        }
+        else {
+            returnInitValue.state = 231
+            //const e='insert into user_cookie value(?, ?)'
+            //const v=await connection.query(e,[msg.deviceID, b])
+        }
+        socket.emit('check cookie', returnInitValue)
+
     })
+
+    socket.on('deviceID', async (msg)=> {
+        let returnInitValue = {}
+
+        const a = 'select DATE_ADD(NOW(), INTERVAL 10 MINUTE)'
+        const b = connection.query(a)
+
+        const c = 'select * from user_cookie where deviceId = ?;'
+        const d = await connection.query(c,[msg.deviceID])
+
+        if (d[0] != null) {
+            const c='update user_cookie set Expire = ? where deviceId = ?'
+            const d=await connection.query(c,[b, msg.deviceID])
+            //returnInitValue.state = 232
+        }
+        else {
+            //returnInitValue.state = 231
+            const e='insert into user_cookie value(?, ?)'
+            const v=await connection.query(e,[msg.deviceID, b])
+        }
+
+        //returnInitValue.state = 232
+        //socket.emit('', returnInitValue)
+
+    })
+
+    /*socket.on('check init', async (msg) => {
+
+    })*/
 
     socket.on('rating list', async (msg) => {
         const query=`select food.id, name, image, userid, rating from food,rating where food.id=rating.foodid and userid=?`

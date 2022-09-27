@@ -160,13 +160,13 @@ class SigninActivity : AppCompatActivity() {
                      * **/
                     INIT_SIGNIN->{
                         setCookieJSON.put("deviceID",deviceID)
-                        AppHelper.socket.emit("insert deviceId",setCookieJSON)
+                        AppHelper.socket.emit("deviceID",setCookieJSON)
                         startActivity(Intent(this,UserInitImageActivity::class.java))
                     }
                     // 초기 로그인이 아닌 경우 Main 액티비티로 이동
                     SIGNIN -> {
                         setCookieJSON.put("deviceID",deviceID)
-                        AppHelper.socket.emit("deviceId",setCookieJSON)
+                        AppHelper.socket.emit("deviceID",setCookieJSON)
                         startActivity(Intent(this,MainActivity::class.java))
                     }
                     // 에러 상황
