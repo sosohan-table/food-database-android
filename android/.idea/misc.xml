@@ -3,6 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Code/SST_projects/food-database-android/android/app/src/main/res/layout/activity_userinit_image.xml" value="0.359375" />
+        <entry key="..\:/Code/SST_projects/food-database-android/android/app/src/main/res/layout/activity_userinit_nickname.xml" value="0.359375" />
         <entry key="..\:/Users/valtin/Desktop/Project/food-database-android/android/app/src/main/res/drawable/google_logo.xml" value="0.1" />
         <entry key="..\:/Users/valtin/Desktop/Project/food-database-android/android/app/src/main/res/drawable/ic_baseline_add_24.xml" value="0.145" />
         <entry key="..\:/Users/valtin/Desktop/Project/food-database-android/android/app/src/main/res/drawable/ic_baseline_person_24.xml" value="0.145" />
