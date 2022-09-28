@@ -45,6 +45,7 @@ class SigninActivity : AppCompatActivity() {
         /**소켓 연결**/
         AppHelper.socket.on("check init",checkInit)
         AppHelper.socket.connect()
+
         /**
          * 로그인 방법(일반 로그인, 소셜 로그인) 에 따른 다른 값(ID, 토큰)을 서버로 전송한다
          * **/
@@ -177,6 +178,8 @@ class SigninActivity : AppCompatActivity() {
                 }
             })
         }
+
+
     override fun onDestroy() {
         super.onDestroy()
 

@@ -128,15 +128,17 @@ io.on('connection', async (socket) => { // async키워드는 해당 콜백을 �
          * 값이 없다면 231 코드를 emit하세요
          * **/
         let returnInitValue={}
-        const a = 'select DATE_ADD(NOW(), INTERVAL 10 MINUTE)'
-        const b = await connection.query(a)
+        //const a = 'select DATE_ADD(NOW(), INTERVAL 10 MINUTE)'
+        //const b = await connection.query(a)
+        const b = await connection.query('select DATE_ADD(NOW(), INTERVAL 10 MINUTE) as now')
+        const now=b[0][0].now
 
         const query = 'select * from user_cookie where deviceId = ?;'
         const v = await connection.query(query,[msg.deviceID])
 
-        if (v[0] != null) {
+        if (v[0].length > 0) {
             const c='update user_cookie set Expire = ? where deviceId = ?'
-            const d=await connection.query(c,[b, msg.deviceID])
+            const d=await connection.query(c,[now, msg.deviceID])
             returnInitValue.state = 232
         }
         else {
@@ -151,25 +153,27 @@ io.on('connection', async (socket) => { // async키워드는 해당 콜백을 �
     socket.on('deviceID', async (msg)=> {
         let returnInitValue = {}
 
-        const a = 'select DATE_ADD(NOW(), INTERVAL 10 MINUTE)'
-        const b = connection.query(a)
+        //const a = 'select DATE_ADD(NOW(), INTERVAL 10 MINUTE)'
+        //const b = await connection.query(a)
+        const b = await connection.query('select DATE_ADD(NOW(), INTERVAL 10 MINUTE) as now')
+        const now=b[0][0].now
 
         const c = 'select * from user_cookie where deviceId = ?;'
         const d = await connection.query(c,[msg.deviceID])
 
-        if (d[0] != null) {
+        if (d[0].length > 0) {
             const c='update user_cookie set Expire = ? where deviceId = ?'
-            const d=await connection.query(c,[b, msg.deviceID])
+            const d=await connection.query(c,[now, msg.deviceID])
             //returnInitValue.state = 232
         }
         else {
             //returnInitValue.state = 231
             const e='insert into user_cookie value(?, ?)'
-            const v=await connection.query(e,[msg.deviceID, b])
+            const v=await connection.query(e,[msg.deviceID, now])
         }
 
         //returnInitValue.state = 232
-        //socket.emit('', returnInitValue)
+        //socket.emit('deviceID', returnInitValue)
 
     })
 
