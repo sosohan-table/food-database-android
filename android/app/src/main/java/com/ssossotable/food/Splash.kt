@@ -15,8 +15,8 @@ class Splash : AppCompatActivity() {
     private lateinit var deviceID:String
 
     /**상태 코드**/
-    private val COOKIE:Int=231 // 쿠키 존재
-    private val NO_COOKIE:Int=232 // 쿠키 미존재
+    private val COOKIE:Int=232 // 쿠키 존재
+    private val NO_COOKIE:Int=231 // 쿠키 미존재
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

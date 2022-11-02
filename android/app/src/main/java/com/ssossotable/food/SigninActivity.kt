@@ -13,10 +13,14 @@ import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.ssossotable.food.databinding.ActivitySigninBinding
+import io.socket.client.Socket
 import io.socket.emitter.Emitter
 import org.json.JSONObject
 
 class SigninActivity : AppCompatActivity() {
+
+    /*private val socket = Socket("192.168.45.84", 3000)*/
+
     /**디바이스 고유값**/
     private var setCookieJSON=JSONObject()
     private var userInfoJSON=JSONObject()
@@ -45,6 +49,7 @@ class SigninActivity : AppCompatActivity() {
         /**소켓 연결**/
         AppHelper.socket.on("check init",checkInit)
         AppHelper.socket.connect()
+
         /**
          * 로그인 방법(일반 로그인, 소셜 로그인) 에 따른 다른 값(ID, 토큰)을 서버로 전송한다
          * **/
@@ -53,7 +58,7 @@ class SigninActivity : AppCompatActivity() {
         binding.signin.setOnClickListener {
             userInfoJSON.put("userID",binding.id.text)
             userInfoJSON.put("userPassword",binding.password.text)
-            AppHelper.socket.emit("id password signin")
+            AppHelper.socket.emit("id password signin", userInfoJSON.toString())
         }
 
         // 회원가입
@@ -159,16 +164,14 @@ class SigninActivity : AppCompatActivity() {
                      *         * 자동로그인 쿠키 확인(check cookie) -(미존재)-> 로그인 액티비티로 이동 -> 로그인 -> 초기로그인 확인(SIGNIN) -> 자동로그인 쿠키 등록(check cookie) -> 메인액티비티로 이동
                      * **/
                     INIT_SIGNIN->{
-                        // 자동 로그인 쿠키 등록
                         setCookieJSON.put("deviceID",deviceID)
-                        AppHelper.socket.emit("check cookie",setCookieJSON)
+                        AppHelper.socket.emit("deviceID",setCookieJSON)
                         startActivity(Intent(this,UserInitImageActivity::class.java))
                     }
                     // 초기 로그인이 아닌 경우 Main 액티비티로 이동
                     SIGNIN -> {
-                        // 자동 로그인 쿠키 등록
                         setCookieJSON.put("deviceID",deviceID)
-                        AppHelper.socket.emit("check cookie",setCookieJSON)
+                        AppHelper.socket.emit("deviceID",setCookieJSON)
                         startActivity(Intent(this,MainActivity::class.java))
                     }
                     // 에러 상황
@@ -179,6 +182,8 @@ class SigninActivity : AppCompatActivity() {
                 }
             })
         }
+
+
     override fun onDestroy() {
         super.onDestroy()
 
