@@ -1,17 +1,14 @@
 package com.ssossotable.food
 
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.view.MenuItem
-import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ssossotable.food.databinding.ActivityMainBinding
+import io.socket.client.IO
+import io.socket.client.Socket
 import io.socket.emitter.Emitter
 import org.json.JSONArray
 import org.json.JSONObject
-import java.text.FieldPosition
 
 class MainActivity : AppCompatActivity() {
 

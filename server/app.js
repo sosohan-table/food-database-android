@@ -31,17 +31,19 @@ io.on('connection', async (socket) => { // async키워드는 해당 콜백을 �
     /**event on**/
     socket.on('id password signin', async (msg)=>{
         let returnInitValue={}
+        console.log('message: ' + msg)
+        const u = JSON.parse(msg)
+        console.log(u.userID)
         const queryID='select * from user where userid=?'
-        const user=await connection.query(queryID,[msg.userID])
+        const user=await connection.query(queryID,[u.userID])
         const hashPassword = crypto.createHash('sha512').update(msg.userPassword).digest('base64')
         if(user[0].length>0) {
-            // 로그인 성공
-            if (hashPassword === user[0].password) {
+            if (hashPassword == user[0].password) { // 로그인 성공
                 // 초기 로그인
                 if (user[0].init == 1) {
                     returnInitValue.state = 231
                     const queryUpdateInit = 'update user set init=0 where userid =?'
-                    connection.query(queryUpdateInit, [msg.userID])
+                    await connection.query(queryUpdateInit, [msg.userID])
                 } else
                     returnInitValue.state = 232
                 socket.emit('check init', returnInitValue)

@@ -13,10 +13,14 @@ import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.ssossotable.food.databinding.ActivitySigninBinding
+import io.socket.client.Socket
 import io.socket.emitter.Emitter
 import org.json.JSONObject
 
 class SigninActivity : AppCompatActivity() {
+
+    /*private val socket = Socket("192.168.45.84", 3000)*/
+
     /**디바이스 고유값**/
     private var setCookieJSON=JSONObject()
     private var userInfoJSON=JSONObject()
@@ -54,7 +58,7 @@ class SigninActivity : AppCompatActivity() {
         binding.signin.setOnClickListener {
             userInfoJSON.put("userID",binding.id.text)
             userInfoJSON.put("userPassword",binding.password.text)
-            AppHelper.socket.emit("id password signin")
+            AppHelper.socket.emit("id password signin", userInfoJSON.toString())
         }
 
         // 회원가입
