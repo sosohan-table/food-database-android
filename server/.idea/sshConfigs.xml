@@ -2,7 +2,7 @@
 <project version="4">
   <component name="SshConfigs">
     <configs>
-      <sshConfig host="18.117.84.165" id="cd171300-f0cf-4d39-ac00-9a6dc304e03e" keyPath="C:\Users\valtin\Desktop\Project\food-system-aws\ssossotable_key.ppk" port="22" nameFormat="DESCRIPTIVE" username="ubuntu" useOpenSSHConfig="true" />
+      <sshConfig host="18.217.250.127" id="cd171300-f0cf-4d39-ac00-9a6dc304e03e" keyPath="C:\Code\Food-Database-Server-Info\ssossotable_key.ppk" port="22" nameFormat="DESCRIPTIVE" username="ubuntu" useOpenSSHConfig="true" />
     </configs>
   </component>
 </project>

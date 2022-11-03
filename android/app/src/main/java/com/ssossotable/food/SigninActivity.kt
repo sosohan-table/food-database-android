@@ -53,7 +53,7 @@ class SigninActivity : AppCompatActivity() {
         binding.signin.setOnClickListener {
             userInfoJSON.put("userID",binding.id.text)
             userInfoJSON.put("userPassword",binding.password.text)
-            AppHelper.socket.emit("id password signin")
+            AppHelper.socket.emit("id password signin", userInfoJSON)
         }
 
         // 회원가입

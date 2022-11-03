@@ -13,6 +13,26 @@ const mysql=require('mysql2/promise')
 const crypto = require("crypto"); // mysql2/promise를 사용해야 비동기 작업이 가능하다
 let connection=null
 
+/**파일 처리 관련 모듈*/
+const fs = require('fs/promises')
+
+// byteArray를 image(.png)로 변경 후 디렉토리에 저장
+/**프로필 사진 저장 함수**/
+async function saveImage(userId, filename, data) {
+    const myBuffer = Buffer.alloc(data.length)
+    for (let i = 0; i < data.length; i++) {
+        myBuffer[i] = data[i]
+    }
+    try {
+        await fs.writeFile('./config/userImages/' + filename, myBuffer)
+        const query = 'update user set image=? where userid=?'
+        await connection.query(query, ['./config/userImages/' + filename, userId])
+        console.log('sql update')
+    }catch (e){
+        console.log(e)
+    }
+}
+
 /**서버 포트(3000번)**/
 const PORT=process.env.PORT||3000
 
@@ -25,23 +45,25 @@ app.get('/', (req, res) => {
 /**소켓 통신**/
 io.on('connection', async (socket) => { // async키워드는 해당 콜백을 비동기로 처리하겠다는 것을 의미함
     console.log('socket connected');
-    socket.on('disconnect',()=>{
+    socket.on('disconnect', () => {
         console.log('socket disconnected')
     })
-    /**event on**/
-    socket.on('id password signin', async (msg)=>{
-        let returnInitValue={}
-        const queryID='select * from user where userid=?'
-        const user=await connection.query(queryID,[msg.userID])
+    /**일반 로그인**/
+    socket.on('id password signin', async (msg) => {
+        let returnInitValue = {}
+        const queryID = 'select * from user where userid=?'
         const hashPassword = crypto.createHash('sha512').update(msg.userPassword).digest('base64')
-        if(user[0].length>0) {
+        const user = await connection.query(queryID, [msg.userID])
+
+        if (user[0].length > 0) {
             // 로그인 성공
-            if (hashPassword === user[0].password) {
+            if (hashPassword == user[0][0].password) {
                 // 초기 로그인
-                if (user[0].init == 1) {
+                if (user[0][0].init == 1) {
                     returnInitValue.state = 231
                     const queryUpdateInit = 'update user set init=0 where userid =?'
-                    connection.query(queryUpdateInit, [msg.userID])
+                    // init = 0 으로 update == 초기 로그인 완료
+                    await connection.query(queryUpdateInit, [msg.userID])
                 } else
                     returnInitValue.state = 232
                 socket.emit('check init', returnInitValue)
@@ -49,44 +71,37 @@ io.on('connection', async (socket) => { // async키워드는 해당 콜백을 �
             // 로그인 실패
             else
                 console.log('login fail')
-        }
-        else console.log('login fail')
+        } else console.log('login fail')
     })
 
-    socket.on('deviceID', async (msg)=>{
-
-
-    })
-
-    socket.on('signin',async msg=>{
-        const hash=crypto.createHash('sha512').update(msg).digest('base64')
-        const query='select * from user where userid=?'
-        const v=await connection.query(query,[hash])
-        let returnValue={}
-        if(v[0].length==0) {
-            returnValue.success=false
+    socket.on('signin', async msg => {
+        const hash = crypto.createHash('sha512').update(msg).digest('base64')
+        const query = 'select * from user where userid=?'
+        const v = await connection.query(query, [hash])
+        let returnValue = {}
+        if (v[0].length == 0) {
+            returnValue.success = false
+        } else {
+            returnValue.success = true
         }
-        else {
-            returnValue.success=true
-        }
-        socket.emit('signin',returnValue)
+        socket.emit('signin', returnValue)
     })
 
     socket.on('signup', async (msg) => {
         console.log('message: ' + msg)
 
-        const hash=crypto.createHash('sha512').update(msg).digest('base64')
-        const query='select * from user where userid=?'
-        const v=await connection.query(query,[hash])
-        let returnValue={}
-        if(v[0].length==0) {
-            const query2='insert into user(userid) values(?)'
-            await connection.query(query2,[hash])
-            returnValue.success=true
+        const hash = crypto.createHash('sha512').update(msg).digest('base64')
+        const query = 'select * from user where userid=?'
+        const v = await connection.query(query, [hash])
+        let returnValue = {}
+        if (v[0].length == 0) {
+            const query2 = 'insert into user(userid) values(?)'
+            await connection.query(query2, [hash])
+            returnValue.success = true
         } else {
-            returnValue.success=false
+            returnValue.success = false
         }
-        socket.emit('signup',returnValue)
+        socket.emit('signup', returnValue)
     })
 
     /**
@@ -98,6 +113,7 @@ io.on('connection', async (socket) => { // async키워드는 해당 콜백을 �
      * 3.2 쿠키 만료 시 deviceid값을 삭제하고 쿠키의 존재 여부는 device값을 가진 row가 있냐 없냐에 따라 처리하세요
      * **/
 
+
     socket.on('check cookie', async (msg) => {
         /**
          * TODO
@@ -105,17 +121,36 @@ io.on('connection', async (socket) => { // async키워드는 해당 콜백을 �
          * 값이 있다면 232 코드
          * 값이 없다면 231 코드를 emit하세요
          * **/
-        let returnInitValue={}
+        let returnInitValue = {}
         const a = 'select DATE_ADD(NOW(), INTERVAL 10 MINUTE)'
         const b = await connection.query(a)
     })
 
     socket.on('rating list', async (msg) => {
-        const query=`select food.id, name, image, userid, rating from food,rating where food.id=rating.foodid and userid=?`
-        const v=await connection.query(query)
+        const query = `select food.id, name, image, userid, rating
+                       from food,
+                            rating
+                       where food.id = rating.foodid
+                         and userid = ?`
+        const v = await connection.query(query)
         console.log(v[0])
     })
-});
+
+
+
+    /**프로필 사진 설정**/
+    socket.on('init user image', async (msg) => {
+        console.log('init user image')
+
+        const userId = msg.userId
+        const imageByteArray = msg.userImage
+        const filename = userId + '.png'
+
+        await saveImage(userId, filename, imageByteArray)
+    })
+
+})
+
 
 server.listen(PORT, async () => {
     try {
@@ -124,7 +159,7 @@ server.listen(PORT, async () => {
             host: '*',
             port: '*',
             user: '*',
-            password: '*',
+            password: '*!',
             database: '*'
         })
     }
