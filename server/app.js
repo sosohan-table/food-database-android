@@ -14,7 +14,24 @@ const crypto = require("crypto"); // mysql2/promise를 사용해야 비동기 �
 let connection=null
 
 /**파일 처리 관련 모듈*/
-const fs = require('fs')
+const fs = require('fs/promises')
+
+// byteArray를 image(.png)로 변경 후 디렉토리에 저장
+/**프로필 사진 저장 함수**/
+async function saveImage(userId, filename, data) {
+    const myBuffer = Buffer.alloc(data.length)
+    for (let i = 0; i < data.length; i++) {
+        myBuffer[i] = data[i]
+    }
+    try {
+        await fs.writeFile('./config/userImages/' + filename, myBuffer)
+        const query = 'update user set image=? where userid=?'
+        await connection.query(query, ['./config/userImages/' + filename, userId])
+        console.log('sql update')
+    }catch (e){
+        console.log(e)
+    }
+}
 
 /**서버 포트(3000번)**/
 const PORT=process.env.PORT||3000
@@ -120,12 +137,7 @@ io.on('connection', async (socket) => { // async키워드는 해당 콜백을 �
     })
 
 
-    /*
-    < 윤현조 Week 2 >
-    서버 디렉토리 경로를 어떻게 설정해야 접근이 가능한 지 ... 모르겠습니다 ...
-    -> 임시로 로컬 디렉토리에 저장이라도 되게 구현
-    업로드되는 파일 사이즈가 너무 작음
-    */
+
     /**프로필 사진 설정**/
     socket.on('init user image', async (msg) => {
         console.log('init user image')
@@ -134,28 +146,7 @@ io.on('connection', async (socket) => { // async키워드는 해당 콜백을 �
         const imageByteArray = msg.userImage
         const filename = userId + '.png'
 
-        // 1. byteArray를 image(.png)로 변경 후 서버 디렉토리에 저장
-        function saveImage(filename, data) {
-            const myBuffer = Buffer.alloc(data.length)
-            for (let i = 0; i < data.length; i++) {
-                myBuffer[i] = data[i]
-            }
-            fs.writeFile('userImages/' + filename, myBuffer, function (err) {
-                if (err) {
-                    console.log(err)
-                } else {
-                    console.log("The file was saved!")
-                }
-            });
-        }
-
-        await saveImage(filename, imageByteArray)
-
-        // 2. sql 에 메타데이터 저장 -> 1번 코드가 실행되면 connection이 실행되지 않음 .. 1번 코드 없을 땐 실행되었음
-        const imageURL = 'config/userImages/' + filename
-        const query = 'update user set image=? where userid=?'
-        connection.query(query, [imageURL, userId])
-        console.log('sql update')
+        await saveImage(userId, filename, imageByteArray)
     })
 
 })
@@ -168,7 +159,7 @@ server.listen(PORT, async () => {
             host: '*',
             port: '*',
             user: '*',
-            password: '*',
+            password: '*!',
             database: '*'
         })
     }
